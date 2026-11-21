@@ -1333,6 +1333,14 @@
             localStorage.setItem('sisfarm_bi_last_update_2026', JSON.stringify(lastSystemUpdateInfo));
           } catch (e) {}
 
+          const latestMonth = getLatestLoadedMonth();
+          if (latestMonth && monthlyStore[latestMonth]?.loaded) {
+            selectedMonth = latestMonth;
+            selectedDay = 'ALL';
+            const mSel = document.getElementById('global-month-select');
+            if (mSel) mSel.value = latestMonth;
+          }
+
           updateLastSyncTimestampUI();
           populateDaySelector();
           updateHeaderPeriodBadge();
@@ -1573,6 +1581,11 @@
     let selectedPharmacy = 'ALL'; // 'ALL', '15', '02', '14', '01', '16'
     let selectedClinicalArea = 'ALL';
     let selectedServiceIndex = 0;
+
+    function getLatestLoadedMonth() {
+      const loadedCodes = MONTH_ORDER.filter(m => monthlyStore[m] && monthlyStore[m].loaded);
+      return loadedCodes.length > 0 ? loadedCodes[loadedCodes.length - 1] : '01';
+    }
 
     function populateDaySelector() {
       const daySel = document.getElementById('global-day-select');
@@ -3369,6 +3382,13 @@
           const cachedUpdate = localStorage.getItem('sisfarm_bi_last_update_2026');
           if (cachedUpdate) lastSystemUpdateInfo = JSON.parse(cachedUpdate);
         } catch (e) {}
+      }
+
+      const initialLatest = getLatestLoadedMonth();
+      if (initialLatest && monthlyStore[initialLatest]?.loaded) {
+        selectedMonth = initialLatest;
+        const mSelInit = document.getElementById('global-month-select');
+        if (mSelInit) mSelInit.value = initialLatest;
       }
 
       updateLastSyncTimestampUI();
